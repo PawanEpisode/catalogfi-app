@@ -1,4 +1,51 @@
-.summary-container {
-    width: 100px;
-    background: #9c2bde;
+.summary-panel {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.summary-card {
+    width: 100%;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 300px;
+    font-family: 'Arial', sans-serif;
+}
+
+.summary-card h3 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333;
+    text-align: center;
+}
+
+.summary-param {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+    padding: 8px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.summary-param .label {
+    font-weight: bold;
+    color: #4B40EE;
+}
+
+.summary-param .value {
+    color: #333;
+    font-size: 1.2em;
+}
+
+.summary-param .value.highlight {
+    color: #28a745; /* For highlighting important values */
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+    transition: 0.3s ease-in-out;
 }

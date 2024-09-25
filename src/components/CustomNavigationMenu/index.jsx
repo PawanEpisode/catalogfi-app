@@ -8,7 +8,7 @@ const CustomNavigationMenu = ({
     handleCurrentMenu
 }) => {
     return (
-        <div className='navigationmenu-container'>
+        <div className='navigationmenu-container dark:bg-gray-800'>
             {NAVIGATION_MENUS_VARABLES.map((menu => 
                     <SingleMenu 
                         key={menu.menuKey} 
@@ -30,7 +30,7 @@ const SingleMenu = ({
     return (
         <div 
             onClick={onMenuClick} 
-            className={`singlemenu-item ${isCurrent ? 'activeItem':''}`}
+            className={`singlemenu-item dark:text-white ${isCurrent ? 'activeItem':''}`}
         >
             {menu?.menuLabel}
         </div>

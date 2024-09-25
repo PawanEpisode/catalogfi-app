@@ -1,4 +1,14 @@
-.statistics-container {
-    width: 100px;
-    background: #9c2bde;
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 8px;
+    font-size: 14px;
+    background-color: black;
+    color: white;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
 }

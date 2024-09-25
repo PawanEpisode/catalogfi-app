@@ -4,7 +4,7 @@ import "./CustomPrice.css";
 
 const CustomPrice = ({ combinedData, selectedCompanies }) => {
     return (
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="dark:bg-gray-800 grid grid-cols-2 gap-4 mb-4 rounded-2xl">
         {Object.entries(selectedCompanies).map(([company, isSelected]) => {
             if (isSelected) {
             const currentPrice = combinedData[combinedData.length - 1][company];
@@ -15,8 +15,8 @@ const CustomPrice = ({ combinedData, selectedCompanies }) => {
                 100
             ).toFixed(2);
             return (
-                <div key={company} className="customprice-container">
-                    <div className="currentvalue-textual">
+                <div key={company} className=" dark:bg-gray-800 customprice-container">
+                    <div className="currentvalue-textual dark:text-indigo-500">
                         {currentPrice.toFixed(2)}
                     </div>
                     <div className="currencyvalue-textual">USD</div>

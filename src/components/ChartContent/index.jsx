@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { Transition } from '@headlessui/react';
 import './ChartContent.css';
 
-const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
+const ChartContent = ({ data, selectedCompanies, fullscreen }) => {
   const svgRef = useRef();
   
   useEffect(() => {
@@ -13,7 +14,7 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
 
     const margin = { top: 20, right: 30, bottom: 30, left: 0 };
     const width = svg.node().getBoundingClientRect().width - margin.left - margin.right;
-    const height = fullScreen ? window.innerHeight * 0.8 : 400 - margin.top - margin.bottom;
+    const height = fullscreen ? window.innerHeight * 0.8 : 400 - margin.top - margin.bottom;
 
     const x = d3.scaleTime()
       .domain(d3.extent(data, d => new Date(d.date)))
@@ -23,6 +24,10 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
       .domain([0, d3.max(data, d => Math.max(d.Apple, d.Google))])
       .nice()
       .range([height, 0]);
+    
+    const volumeScale = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.volume)])
+    .range([0, height / 4]);
 
     const line = d3.line()
       .x(d => x(new Date(d.date)))
@@ -30,6 +35,18 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
 
     const g = svg.append("g")
       .attr("transform", `translate(0,${margin.top})`);
+
+    // Add volume bars
+    g.selectAll(".volume-bar")
+    .data(data)
+    .enter().append("rect")
+    .attr("class", "volume-bar")
+    .attr("x", d => x(new Date(d.date)) - 1)
+    .attr("y", d => height - volumeScale(d.volume))
+    .attr("width", 2)
+    .attr("height", d => volumeScale(d.volume))
+    .attr("fill", "rgb(230, 232, 235)")
+    .attr("opacity", 0.5);
 
     const colors = { Apple: "#4B40EE", Google: "#e240ee" };
 
@@ -44,6 +61,8 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
 
         // Get the y-coordinate for the last stock value using the D3 y-scale
         const lastYCoord = y(lastStockValue);
+        const leftDimension = fullscreen ? (width+ 50): (width + 250);
+        const topDimension = fullscreen ? lastYCoord + 100: height + lastYCoord;
 
         // Add the line
         g.append("path")
@@ -57,8 +76,8 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
         .append("div")
         .attr("class", `fixed-tooltip-${company}`)
         .style("position", "absolute")
-        .style("left", (width + 250) + "px") // Position it outside the chart
-        .style("top", height + lastYCoord + "px") // Align it with the company's line
+        .style("left", leftDimension + "px") // Position it outside the chart
+        .style("top", topDimension + "px") // Align it with the company's line
         .style("background-color", colors[company])
         .style("color", "#fff")
         .style("width", "80px")
@@ -78,21 +97,31 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
         g.append("path")
           .datum(companyData)
           .attr("fill", colors[company])
-          .attr("fill-opacity", 0.1)
+          .attr("fill-opacity", 0.06)
           .attr("d", area);
       }
     });
 
-    // Add tooltip
-    const tooltip = d3.select("body").append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0)
-      .style("position", "absolute")
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px");
+    // Add vertical lines
+    g.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .attr("class", "x-axis")
+    .call(d3.axisBottom(x).tickSize(-height))
+    .call(g => g.select(".domain").remove())
+    .call(g => g.selectAll(".tick line")
+      .attr("class", "gridStroke")
+      .attr("stroke", "currentColor")
+      .attr("stroke-opacity", 0.1));
+
+    // Style tick labels
+    svg.selectAll(".tick text")
+      .attr("fill", "currentColor")
+      .attr("font-size", "10")
+      .attr("font-family", "sans-serif");
+
+    // Adjust Y-axis label position
+    svg.select(".y-axis .tick:last-of-type text")
+      .attr("text-anchor", "start");
 
     const bisect = d3.bisector(d => new Date(d.date)).left;
 
@@ -124,13 +153,12 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
 
     svg.append("rect")
       .attr("width", width)
-      .attr("height", height)
+      .attr("height", fullscreen ? "600px" : height)
       .style("fill", "none")
       .style("pointer-events", "all")
       .on("mouseover", () => {
         verticalLine.attr("opacity", 1);
         Object.values(horizontalLines).forEach(line => line.attr("opacity", 1));
-        tooltip.style("opacity", 1);
       })
       .on("mousemove", (event) => {
         const x0 = x.invert(d3.pointer(event)[0] - margin.left);
@@ -152,6 +180,9 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
 
               // Select or create a separate tooltip for each company
               let companyTooltip = d3.select(`.tooltip-${company}`);
+
+              const leftDimension = fullscreen ? (width+ 50): (width + 250);
+              const topDimension = fullscreen ? y(selectedData[company]) + 100: height + y(selectedData[company]);
               
               if (companyTooltip.empty()) {
                 companyTooltip = d3.select("body")
@@ -170,13 +201,12 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
               // Create or update hover tooltip with current price
               companyTooltip
               .html(`${company}: $${selectedData[company].toFixed(2)}`)
-              .style("left", (width + 250) + "px") // Fixed on the right side of the graph
-              .style("top", height + y(selectedData[company]) + "px")
+              .style("left",leftDimension + "px") // Fixed on the right side of the graph
+              .style("top", topDimension + "px")
               .style("z-index", "99")
               .style("opacity", 1);  // Show hover tooltip
           } else {
             horizontalLines[company].attr("opacity", 0); // Hide line for unselected companies
-
             d3.select(`.tooltip-${company}`)
             .style("opacity", 0) // Hide the tooltip
             .remove(); // Optionally, you can remove the tooltip from the DOM
@@ -186,7 +216,6 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
       .on("mouseout", () => {
         verticalLine.attr("opacity", 0);
         Object.values(horizontalLines).forEach(line => line.attr("opacity", 0));
-        tooltip.style("opacity", 0);
         d3.select(`.tooltip-Apple`)
             .style("opacity", 0) // Hide the tooltip
             .remove();
@@ -195,11 +224,30 @@ const ChartContent = ({ data, selectedCompanies, fullScreen }) => {
             .remove();
       });
 
-  }, [data, selectedCompanies, fullScreen]);
+    return () => {
+      d3.select(`.fixed-tooltip-Apple`)
+            .style("opacity", 0) // Hide the tooltip
+            .remove();
+      d3.select(`.fixed-tooltip-Google`)
+            .style("opacity", 0) // Hide the tooltip
+            .remove();
+    }
+
+  }, [data, selectedCompanies, fullscreen]);
   return (
-    <div className='chartdisplay-container'>
-        <svg ref={svgRef} width="100%" height={fullScreen ? "80vh" : "400px"}></svg>
-  </div>
+    <Transition
+      show={true}
+      enter="transition-opacity duration-300"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="transition-opacity duration-300"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+    >
+      <div className='chartdisplay-container dark:bg-gray-800'>
+        <svg ref={svgRef} width="100%" height={fullscreen ? "600px" : "400px"}></svg>
+      </div>
+    </Transition>
   )
 }
 

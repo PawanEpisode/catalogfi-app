@@ -9,3 +9,16 @@
   box-sizing: border-box;
   padding: 0;
 }
+
+/* In global styles */
+html {
+  transition: background-color 0.3s ease;
+}
+
+.dark body {
+  background-color: #9ca3af; /* Tailwind's gray-800 */
+}
+
+body {
+  background-color: #f3f4f6; /* Tailwind's gray-100 */
+}

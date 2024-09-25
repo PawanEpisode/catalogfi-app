@@ -1,27 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import './CustomActionsButton.css'
-import { TIME_ACTIONS_ITEMS } from '../../utils/constants';
+import { TIME_ACTIONS_ITEMS, TIME_ACTIONS_ITEMS_FOR_STATISTICS } from '../../utils/constants';
 import fullscreen from '../../assets/fullscreen.png';
-import compare from '../../assets/compare.png';
 import { CompareSelector } from '../CompareSelector';
 
+import './CustomActionsButton.css'
+
 const CustomActionsButton = ({
+    currentMenu,
     currentTimeMenu, 
     handleCurrentTimeMenu,
     handlFullscreen,
     selectedCompanies,
     setSelectedCompanies
 }) => {
+    const [timeRangeOptions, setTimeRangeOptions] = useState([]);
+
+    useEffect(() => {
+        const getTimeRangeOptions = () => {
+            switch (currentMenu) {
+                case 'Chart':
+                    setTimeRangeOptions(TIME_ACTIONS_ITEMS);
+                    break;
+                case 'Statistics':
+                    setTimeRangeOptions(TIME_ACTIONS_ITEMS_FOR_STATISTICS);
+                    break;
+                default:
+                    setTimeRangeOptions([]);
+                    break;
+            }
+        }
+        getTimeRangeOptions();
+    }, [currentMenu])
     return (
-        <div className='actionsbutton-container'>
-            <div onClick={handlFullscreen} className='generalflexcss action-button-textual'>
+        <div className='actionsbutton-container dark:bg-gray-800'>
+            <div onClick={handlFullscreen} className='generalflexcss dark:hover:text-white action-button-textual'>
                 <img src={fullscreen} alt='full-screen-icon'/>
                 Fullscreen
             </div>
             <CompareSelector selectedCompanies={selectedCompanies} setSelectedCompanies={setSelectedCompanies}/>
             <div className='time-action-button-container'>
-                {TIME_ACTIONS_ITEMS.map(time => 
+                {timeRangeOptions?.map(time => 
                         <SingleTimeMenu 
                         key={time?.menuKey} 
                         timeMenu={time} 
@@ -42,7 +61,7 @@ const SingleTimeMenu = ({
     return (
         <div 
             onClick={onTimeMenuClick} 
-            className={`singletimemenu-item ${isCurrent ? 'activetimeItem':''}`}
+            className={`singletimemenu-item dark:hover:text-white ${isCurrent ? 'activetimeItem':''}`}
         >
             {timeMenu?.menuLabel}
         </div>

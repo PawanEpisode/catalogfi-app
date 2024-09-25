@@ -8,39 +8,43 @@ import SettingsContent from '../SettingsContent';
 
 import './CustomChartDisplay.css';
 
-const CustomChartDisplay = ({currentMenu, chartData,selectedCompanies, fullscreen}) => {
+const CustomChartDisplay = ({currentMenu,statisticsData, chartData,selectedCompanies, fullScreen}) => {
     const getMenuBasedUI = (menu) => { 
         switch(menu) {
             case 'Summary':
                 return (
-                    <SummaryContent />
+                    <SummaryContent selectedCompanies={selectedCompanies}/>
                 );
             case 'Chart':
                 return (
                     <ChartContent 
                         data={chartData} 
                         selectedCompanies={selectedCompanies} 
-                        fullscreen={fullscreen}
+                        fullscreen={fullScreen}
                     />
                 );
             case 'Statistics':
                 return (
-                    <StatisticsContent />
+                    <StatisticsContent 
+                        data={statisticsData}
+                        selectedCompanies={selectedCompanies}
+                        fullscreen={fullScreen}
+                    />
                 );
             case 'Analysis':
                 return (
-                    <AnalysisContent />
+                    <AnalysisContent selectedCompanies={selectedCompanies}/>
                 );
             case 'Settings':
                 return (
                     <SettingsContent />
                 );
             default:
-                <div>Pawan</div>
+                <div></div>
         }
     }
     return (
-        <div className='menu-based-ui-container'>
+        <div className='menu-based-ui-container rounded-2xl dark:bg-gray-800'>
             {getMenuBasedUI(currentMenu)}
         </div>
     )

@@ -1,0 +1,6 @@
+.menu-based-ui-container {
+    width: 100%;
+    padding: 20px 60px 60px;
+    display: flex;
+    background: white;
+}

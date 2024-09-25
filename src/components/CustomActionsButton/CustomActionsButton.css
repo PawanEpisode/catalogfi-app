@@ -1,0 +1,38 @@
+.actionsbutton-container {
+    width: 100%;
+    display: flex;
+    gap: 30px;
+    padding: 0 60px;
+    background: white;
+}
+
+.time-action-button-container {
+    display: flex;
+    gap: 10px;
+    background: inherit;
+    margin-left: 100px;
+}
+
+.singletimemenu-item {
+    width: 100%;
+    padding: 4px 8px;
+    font-family: Circular Std, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 22.77px;
+    text-align: left;
+    color: #6F7177;
+    background: inherit;
+    cursor: pointer;
+}
+
+.generalflexcss:hover ,
+.singletimemenu-item:hover:not(.activetimeItem) {
+    color: #1A243A;
+}
+
+.activetimeItem {
+    color: white;
+    background: #4B40EE;
+    border-radius: 5px;
+}

@@ -1,0 +1,41 @@
+.customprice-container {
+    position: relative;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 60px;
+    background: white;
+    border-radius: 20px;
+}
+
+.currentvalue-textual {
+    font-family: Circular Std, sans-serif;
+    font-size: 70px;
+    font-weight: 400;
+    line-height: 88.56px;
+    text-align: left;
+    color: #1A243A;
+    background: inherit;
+}
+
+.incrementvalue-textual {
+    font-family: Circular Std, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 22.77px;
+    text-align: left;
+    color: #67BF6B;
+    background: inherit;
+}
+
+.currencyvalue-textual {
+    position: absolute;
+    right: 10px;
+    font-family: Circular Std, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 30.36px;
+    text-align: left;
+    color: #BDBEBF;
+    background: inherit;
+}
